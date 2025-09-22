@@ -1,4 +1,4 @@
-FILE_NAME = "../attendance_weekday_500.txt"
+FILE_NAME = "mission1/attendance_weekday_500.txt"
 MAX = 500
 
 id1 = {}
