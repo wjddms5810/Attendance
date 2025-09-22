@@ -28,6 +28,14 @@ class UserData:
         self.wednesday_count = 0
         self.weekend_count = 0
 
+    def add_attendance(self, weekday, points):
+        self.attendance[weekday] += 1
+        self.points += points
+        if weekday == "wednesday":
+            self.wednesday_count += 1
+        elif weekday in ["saturday", "sunday"]:
+            self.weekend_count += 1
+
 
 def add_user_if_not_exists(user_name):
     global user_count
@@ -63,8 +71,7 @@ def is_wednesday(weekday):
 def add_user_data(user_name, weekday):
     user_data = add_user_if_not_exists(user_name)
     points = get_weekday_points(weekday)
-    user_data.attendance[weekday] += 1
-    user_data.points += points
+    user_data.add_attendance(weekday, points)
 
     if is_wednesday(weekday):
         user_data.wednesday_count += 1
@@ -132,6 +139,8 @@ def read_attendance_file(FILE_NAME):
             return input
     except FileNotFoundError:
         print("파일을 찾을 수 없습니다.")
+
+
 
 
 def input_file():
