@@ -2,9 +2,6 @@ from user_data import UserData
 from weekday_rule import WeekdayRule
 from grade_policy import GradePolicy
 
-FILE_NAME = "attendance_weekday_500.txt"
-MAX_FILE_SIZE = 500
-
 
 class AttendanceService:
     def __init__(self, weekday_rule: WeekdayRule, grade_policy: GradePolicy):
@@ -26,8 +23,8 @@ class AttendanceService:
 
     def process_grades(self):
         for user in self.users.values():
-            user.points += self.grade_policy.calculate_bonus(user)
-            user.grade = self.grade_policy.calculate_grade(user)
+            user.add_points(self.grade_policy.calculate_bonus(user))
+            user.set_grade(self.grade_policy.calculate_grade(user))
 
     def get_all_users(self):
         return list(self.users.values())

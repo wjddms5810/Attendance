@@ -15,10 +15,16 @@ class UserData:
         self.wednesday_count = 0
         self.weekend_count = 0
 
+    def add_points(self, points):
+        self.points += points
+
     def add_attendance(self, weekday, points):
         self.attendance[weekday] += 1
-        self.points += points
+        self.add_points(points)
         if weekday == "wednesday":
             self.wednesday_count += 1
         elif weekday in ["saturday", "sunday"]:
             self.weekend_count += 1
+
+    def set_grade(self, grade):
+        self.grade = grade
