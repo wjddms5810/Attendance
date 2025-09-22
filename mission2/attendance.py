@@ -1,4 +1,7 @@
-FILE_NAME = "mission2/attendance_weekday_500.txt"
+from user_data import UserData
+from weekday_rule import BaseWeekdayRule
+
+FILE_NAME = "attendance_weekday_500.txt"
 MAX_FILE_SIZE = 500
 
 BONUS_THRESHOLD = 10
@@ -11,32 +14,6 @@ users = {}
 user_count = 0
 
 
-class UserData:
-    def __init__(self, name):
-        self.name = name
-        self.attendance = {
-            "monday": 0,
-            "tuesday": 0,
-            "wednesday": 0,
-            "thursday": 0,
-            "friday": 0,
-            "saturday": 0,
-            "sunday": 0
-        }
-        self.points = 0
-        self.grade = 0
-        self.wednesday_count = 0
-        self.weekend_count = 0
-
-    def add_attendance(self, weekday, points):
-        self.attendance[weekday] += 1
-        self.points += points
-        if weekday == "wednesday":
-            self.wednesday_count += 1
-        elif weekday in ["saturday", "sunday"]:
-            self.weekend_count += 1
-
-
 def add_user_if_not_exists(user_name):
     global user_count
 
@@ -45,19 +22,6 @@ def add_user_if_not_exists(user_name):
         users[user_name] = UserData(user_name)
 
     return users[user_name]
-
-
-def get_weekday_points(weekday):
-    weekday_points = {
-        "monday": 1,
-        "tuesday": 1,
-        "wednesday": 3,
-        "thursday": 1,
-        "friday": 1,
-        "saturday": 2,
-        "sunday": 2
-    }
-    return weekday_points.get(weekday, 0)
 
 
 def is_weekend(weekday):
@@ -70,7 +34,8 @@ def is_wednesday(weekday):
 
 def add_user_data(user_name, weekday):
     user_data = add_user_if_not_exists(user_name)
-    points = get_weekday_points(weekday)
+    weekday_rule = BaseWeekdayRule()
+    points = weekday_rule.get_weekday_points(weekday)
     user_data.add_attendance(weekday, points)
 
     if is_wednesday(weekday):
@@ -82,7 +47,7 @@ def add_user_data(user_name, weekday):
 def calculate_bonus_points(user_data):
     bonus = 0
 
-    if user_data.attendance["wednesday"]  >= BONUS_THRESHOLD:
+    if user_data.attendance["wednesday"] >= BONUS_THRESHOLD:
         bonus += WEDNESDAY_BONUS
 
     weekend_total = user_data.attendance["saturday"] + user_data.attendance["sunday"]
@@ -139,8 +104,6 @@ def read_attendance_file(FILE_NAME):
             return input
     except FileNotFoundError:
         print("파일을 찾을 수 없습니다.")
-
-
 
 
 def input_file():
