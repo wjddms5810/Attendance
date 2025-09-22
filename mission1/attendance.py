@@ -14,7 +14,7 @@ user_count = 0
 class UserData:
     def __init__(self, name):
         self.name = name
-        self.attendance = {  # 요일별 출석 횟수
+        self.attendance = {
             "monday": 0,
             "tuesday": 0,
             "wednesday": 0,
