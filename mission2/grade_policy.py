@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from mission2.user_data import UserData
+from mission2.user import USER
 
 BONUS_THRESHOLD = 10
 WEEKEND_BONUS = 10
@@ -9,30 +9,29 @@ GOLD_THRESHOLD = 50
 
 class GradePolicy(ABC):
     @abstractmethod
-    def calculate_bonus(self, user_data: UserData) -> str:
+    def calculate_bonus(self, user_data: USER) -> str:
         pass
 
     @abstractmethod
-    def calculate_grade(self, user_data: UserData) -> str:
+    def calculate_grade(self, user_data: USER) -> str:
         pass
 
 
-
 class DefaultGradePolicy(GradePolicy):
-    def calculate_bonus(self, user_data: UserData) -> int:
+    def calculate_bonus(self, user: USER) -> int:
         bonus = 0
-        if user_data.attendance["wednesday"] >= BONUS_THRESHOLD:
+        if user.attendance["wednesday"] >= BONUS_THRESHOLD:
             bonus += WEDNESDAY_BONUS
 
-        weekend_total = user_data.attendance["saturday"] + user_data.attendance["sunday"]
+        weekend_total = user.attendance["saturday"] + user.attendance["sunday"]
         if weekend_total >= BONUS_THRESHOLD:
             bonus += WEEKEND_BONUS
 
         return bonus
 
-    def calculate_grade(self, user_data: UserData) -> str:
-        if user_data.points >= GOLD_THRESHOLD:
+    def calculate_grade(self, user: USER) -> str:
+        if user.get_points() >= GOLD_THRESHOLD:
             return "GOLD"
-        elif user_data.points >= SILVER_THRESHOLD:
+        elif user.get_points() >= SILVER_THRESHOLD:
             return "SILVER"
         return "NORMAL"

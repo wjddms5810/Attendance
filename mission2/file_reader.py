@@ -13,5 +13,5 @@ class FileReader:
                     parts = line.strip().split()
                     if len(parts) == 2:
                         yield parts[0], parts[1]
-        except FileNotFoundError:
-            print("파일을 찾을 수 없습니다.")
+        except FileNotFoundError as e:
+            raise e

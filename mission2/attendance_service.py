@@ -1,4 +1,4 @@
-from user_data import UserData
+from user import USER
 from weekday_rule import WeekdayRule
 from grade_policy import GradePolicy
 
@@ -10,10 +10,10 @@ class AttendanceService:
         self.users = {}
         self.user_count = 0
 
-    def get_or_create_user(self, name: str) -> UserData:
+    def get_or_create_user(self, name: str) -> USER:
         if name not in self.users:
             self.user_count += 1
-            self.users[name] = UserData(name)
+            self.users[name] = USER(name)
         return self.users[name]
 
     def add_attendance(self, user_name: str, weekday: str):

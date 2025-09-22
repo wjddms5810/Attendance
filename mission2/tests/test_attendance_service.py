@@ -1,10 +1,11 @@
+import os
 from mission2.attendance_service import AttendanceService
 from mission2.weekday_rule import BaseWeekdayRule
 from mission2.grade_policy import DefaultGradePolicy
 from mission2.file_reader import FileReader
 from mission2.reporter import Reporter
 
-FILE_NAME = "attendance_weekday_500.txt"
+FILE_NAME = os.path.join(os.path.dirname(__file__), "attendance_weekday_500.txt")
 MAX_FILE_SIZE = 500
 
 def test_attendance_service(capsys):

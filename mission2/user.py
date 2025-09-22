@@ -1,4 +1,4 @@
-class UserData:
+class USER:
     def __init__(self, name):
         self.name = name
         self.attendance = {
@@ -10,13 +10,22 @@ class UserData:
             "saturday": 0,
             "sunday": 0
         }
-        self.points = 0
-        self.grade = ''
+        self._points = 0
+        self._grade = ''
         self.wednesday_count = 0
         self.weekend_count = 0
 
     def add_points(self, points):
-        self.points += points
+        self._points += points
+
+    def get_points(self):
+        return self._points
+
+    def set_grade(self, grade):
+        self._grade = grade
+
+    def get_grade(self):
+        return self._grade
 
     def add_attendance(self, weekday, points):
         self.attendance[weekday] += 1
@@ -25,6 +34,3 @@ class UserData:
             self.wednesday_count += 1
         elif weekday in ["saturday", "sunday"]:
             self.weekend_count += 1
-
-    def set_grade(self, grade):
-        self.grade = grade
