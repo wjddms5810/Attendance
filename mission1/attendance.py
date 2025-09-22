@@ -51,13 +51,13 @@ def is_wednesday(weekday):
     return weekday == "wednesday"
 
 
-def input2(w, wk):
-    user_id = add_user_if_not_exists(w)
-    index, add_point = get_weekday_index_and_points(wk)
+def input2(user_name, weekday):
+    user_id = add_user_if_not_exists(user_name)
+    index, add_point = get_weekday_index_and_points(weekday)
 
-    if is_wednesday(wk):
+    if is_wednesday(weekday):
         wednesday[user_id] += 1
-    elif is_weekend(wk):
+    elif is_weekend(weekday):
         weekend[user_id] += 1
 
     dat[user_id][index] += 1
@@ -78,30 +78,41 @@ def read_attendance_file(FILE_NAME):
         print("파일을 찾을 수 없습니다.")
 
 
+def calculate_bonus_points(user_id):
+    bonus = 0
+
+    if dat[user_id][2] >= BONUS_THRESHOLD:
+        bonus += WEDNESDAY_BONUS
+
+    if dat[user_id][5] + dat[user_id][6] >= BONUS_THRESHOLD:
+        bonus += WEEKEND_BONUS
+
+    return bonus
+
+
+def calculate_grade(points):
+    if points >= GOLD_THRESHOLD:
+        return 1
+    elif points >= SILVER_THRESHOLD:
+        return 2
+    else:
+        return 0
+
+
 def process_all_users():
     for i in range(1, id_cnt + 1):
-        if dat[i][2] >= BONUS_THRESHOLD:
-            points[i] += WEDNESDAY_BONUS
-        if dat[i][5] + dat[i][6] >= BONUS_THRESHOLD:
-            points[i] += WEEKEND_BONUS
+        points[i] += calculate_bonus_points(i)
+        grade[i] = calculate_grade(points[i])
 
-        if points[i] >= GOLD_THRESHOLD:
-            grade[i] = 1
-        elif points[i] >= SILVER_THRESHOLD:
-            grade[i] = 2
-        else:
-            grade[i] = 0
+
+def get_grade_name(grade_number):
+    grade_names = {0: "NORMAL", 1: "GOLD", 2: "SILVER"}
+    return grade_names.get(grade_number, "NORMAL")
 
 
 def print_points_and_grade():
     for i in range(1, id_cnt + 1):
-        print(f"NAME : {names[i]}, POINT : {points[i]}, GRADE : ", end="")
-        if grade[i] == 1:
-            print("GOLD")
-        elif grade[i] == 2:
-            print("SILVER")
-        else:
-            print("NORMAL")
+        print(f"NAME : {names[i]}, POINT : {points[i]}, GRADE : {get_grade_name(grade[i])}")
 
 
 def print_removed_player():
