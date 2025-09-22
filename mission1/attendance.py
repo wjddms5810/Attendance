@@ -7,40 +7,49 @@ WEDNESDAY_BONUS = 10
 SILVER_THRESHOLD = 30
 GOLD_THRESHOLD = 50
 
-id1 = {}
-id_cnt = 0
+users = {}
+user_count = 0
 
-# dat[사용자ID][요일]
-dat = [[0] * 100 for _ in range(100)]
-points = [0] * 100
-grade = [0] * 100
-names = [''] * 100
-wednesday = [0] * 100
-weekend = [0] * 100
+
+class UserData:
+    def __init__(self, name):
+        self.name = name
+        self.attendance = {  # 요일별 출석 횟수
+            "monday": 0,
+            "tuesday": 0,
+            "wednesday": 0,
+            "thursday": 0,
+            "friday": 0,
+            "saturday": 0,
+            "sunday": 0
+        }
+        self.points = 0
+        self.grade = 0
+        self.wednesday_count = 0
+        self.weekend_count = 0
 
 
 def add_user_if_not_exists(user_name):
-    global id_cnt
+    global user_count
 
-    if user_name not in id1:
-        id_cnt += 1
-        id1[user_name] = id_cnt
-        names[id_cnt] = user_name
+    if user_name not in users:
+        user_count += 1
+        users[user_name] = UserData(user_name)
 
-    return id1[user_name]
+    return users[user_name]
 
 
-def get_weekday_index_and_points(weekday):
-    weekday_info = {
-        "monday": (0, 1),
-        "tuesday": (1, 1),
-        "wednesday": (2, 3),
-        "thursday": (3, 1),
-        "friday": (4, 1),
-        "saturday": (5, 2),
-        "sunday": (6, 2)
+def get_weekday_points(weekday):
+    weekday_points = {
+        "monday": 1,
+        "tuesday": 1,
+        "wednesday": 3,
+        "thursday": 1,
+        "friday": 1,
+        "saturday": 2,
+        "sunday": 2
     }
-    return weekday_info.get(weekday)
+    return weekday_points.get(weekday, 0)
 
 
 def is_weekend(weekday):
@@ -52,39 +61,25 @@ def is_wednesday(weekday):
 
 
 def input2(user_name, weekday):
-    user_id = add_user_if_not_exists(user_name)
-    index, add_point = get_weekday_index_and_points(weekday)
+    user_data = add_user_if_not_exists(user_name)
+    points = get_weekday_points(weekday)
+    user_data.attendance[weekday] += 1
+    user_data.points += points
 
     if is_wednesday(weekday):
-        wednesday[user_id] += 1
+        user_data.wednesday_count += 1
     elif is_weekend(weekday):
-        weekend[user_id] += 1
-
-    dat[user_id][index] += 1
-    points[user_id] += add_point
+        user_data.weekend_count += 1
 
 
-def read_attendance_file(FILE_NAME):
-    try:
-        with open(FILE_NAME, encoding='utf-8') as f:
-            for _ in range(MAX):
-                line = f.readline()
-                if not line:
-                    break
-                parts = line.strip().split()
-                if len(parts) == 2:
-                    input2(parts[0], parts[1])
-    except FileNotFoundError:
-        print("파일을 찾을 수 없습니다.")
-
-
-def calculate_bonus_points(user_id):
+def calculate_bonus_points(user_data):
     bonus = 0
 
-    if dat[user_id][2] >= BONUS_THRESHOLD:
+    if user_data.attendance["wednesday"]  >= BONUS_THRESHOLD:
         bonus += WEDNESDAY_BONUS
 
-    if dat[user_id][5] + dat[user_id][6] >= BONUS_THRESHOLD:
+    weekend_total = user_data.attendance["saturday"] + user_data.attendance["sunday"]
+    if weekend_total >= BONUS_THRESHOLD:
         bonus += WEEKEND_BONUS
 
     return bonus
@@ -100,9 +95,9 @@ def calculate_grade(points):
 
 
 def process_all_users():
-    for i in range(1, id_cnt + 1):
-        points[i] += calculate_bonus_points(i)
-        grade[i] = calculate_grade(points[i])
+    for user_data in users.values():
+        user_data.points += calculate_bonus_points(user_data)
+        user_data.grade = calculate_grade(user_data.points)
 
 
 def get_grade_name(grade_number):
@@ -111,16 +106,30 @@ def get_grade_name(grade_number):
 
 
 def print_points_and_grade():
-    for i in range(1, id_cnt + 1):
-        print(f"NAME : {names[i]}, POINT : {points[i]}, GRADE : {get_grade_name(grade[i])}")
+    for user_data in users.values():
+        print(f"NAME : {user_data.name}, POINT : {user_data.points}, GRADE : {get_grade_name(user_data.grade)}")
 
 
 def print_removed_player():
     print("\nRemoved player")
     print("==============")
-    for i in range(1, id_cnt + 1):
-        if grade[i] not in (1, 2) and wednesday[i] == 0 and weekend[i] == 0:
-            print(names[i])
+    for user_data in users.values():
+        if user_data.grade not in (1, 2) and user_data.wednesday_count == 0 and user_data.weekend_count == 0:
+            print(user_data.name)
+
+
+def read_attendance_file(FILE_NAME):
+    try:
+        with open(FILE_NAME, encoding='utf-8') as f:
+            for _ in range(MAX):
+                line = f.readline()
+                if not line:
+                    break
+                parts = line.strip().split()
+                if len(parts) == 2:
+                    input2(parts[0], parts[1])
+    except FileNotFoundError:
+        print("파일을 찾을 수 없습니다.")
 
 
 def input_file():
