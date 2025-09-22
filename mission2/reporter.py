@@ -11,5 +11,5 @@ class Reporter:
         print("\nRemoved player")
         print("==============")
         for user in users:
-            if user.get_grade() == "NORMAL" and user.wednesday_count == 0 and user.weekend_count == 0:
+            if user.get_grade() == "NORMAL" and user.check_wednesday_and_weekend():
                 print(user.name)

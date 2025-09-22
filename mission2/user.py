@@ -34,3 +34,6 @@ class USER:
             self.wednesday_count += 1
         elif weekday in ["saturday", "sunday"]:
             self.weekend_count += 1
+
+    def check_wednesday_and_weekend(self):
+        return self.wednesday_count == 0 and self.weekend_count == 0
