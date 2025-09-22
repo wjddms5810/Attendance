@@ -1,4 +1,4 @@
-from user_data import UserData
+from mission2.user_data import UserData
 
 def test_user_data():
     user_data = UserData('je.bae')

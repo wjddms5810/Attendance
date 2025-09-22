@@ -1,4 +1,4 @@
-from weekday_rule import BaseWeekdayRule
+from mission2.weekday_rule import BaseWeekdayRule
 
 def test_weekday_rule():
     rule = BaseWeekdayRule()

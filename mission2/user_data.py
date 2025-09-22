@@ -11,7 +11,7 @@ class UserData:
             "sunday": 0
         }
         self.points = 0
-        self.grade = 0
+        self.grade = ''
         self.wednesday_count = 0
         self.weekend_count = 0
 

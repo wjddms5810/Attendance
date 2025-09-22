@@ -1,14 +1,9 @@
 from user_data import UserData
 from weekday_rule import BaseWeekdayRule
+from grade_policy import DefaultGradePolicy
 
 FILE_NAME = "attendance_weekday_500.txt"
 MAX_FILE_SIZE = 500
-
-BONUS_THRESHOLD = 10
-WEEKEND_BONUS = 10
-WEDNESDAY_BONUS = 10
-SILVER_THRESHOLD = 30
-GOLD_THRESHOLD = 50
 
 users = {}
 user_count = 0
@@ -44,32 +39,12 @@ def add_user_data(user_name, weekday):
         user_data.weekend_count += 1
 
 
-def calculate_bonus_points(user_data):
-    bonus = 0
-
-    if user_data.attendance["wednesday"] >= BONUS_THRESHOLD:
-        bonus += WEDNESDAY_BONUS
-
-    weekend_total = user_data.attendance["saturday"] + user_data.attendance["sunday"]
-    if weekend_total >= BONUS_THRESHOLD:
-        bonus += WEEKEND_BONUS
-
-    return bonus
-
-
-def calculate_grade(points):
-    if points >= GOLD_THRESHOLD:
-        return 1
-    elif points >= SILVER_THRESHOLD:
-        return 2
-    else:
-        return 0
-
-
 def process_all_users():
+    grade_policy = DefaultGradePolicy()
+
     for user_data in users.values():
-        user_data.points += calculate_bonus_points(user_data)
-        user_data.grade = calculate_grade(user_data.points)
+        user_data.points += grade_policy.calculate_bonus(user_data)
+        user_data.grade = grade_policy.calculate_grade(user_data)
 
 
 def get_grade_name(grade_number):
@@ -79,7 +54,7 @@ def get_grade_name(grade_number):
 
 def print_points_and_grade():
     for user_data in users.values():
-        print(f"NAME : {user_data.name}, POINT : {user_data.points}, GRADE : {get_grade_name(user_data.grade)}")
+        print(f"NAME : {user_data.name}, POINT : {user_data.points}, GRADE : {user_data.grade}")
 
 
 def print_removed_player():
