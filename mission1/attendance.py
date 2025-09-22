@@ -1,6 +1,12 @@
 FILE_NAME = "mission1/attendance_weekday_500.txt"
 MAX = 500
 
+BONUS_THRESHOLD = 10
+WEEKEND_BONUS = 10
+WEDNESDAY_BONUS = 10
+SILVER_THRESHOLD = 30
+GOLD_THRESHOLD = 50
+
 id1 = {}
 id_cnt = 0
 
@@ -74,14 +80,14 @@ def read_attendance_file(FILE_NAME):
 
 def process_all_users():
     for i in range(1, id_cnt + 1):
-        if dat[i][2] > 9:
-            points[i] += 10
-        if dat[i][5] + dat[i][6] > 9:
-            points[i] += 10
+        if dat[i][2] >= BONUS_THRESHOLD:
+            points[i] += WEDNESDAY_BONUS
+        if dat[i][5] + dat[i][6] >= BONUS_THRESHOLD:
+            points[i] += WEEKEND_BONUS
 
-        if points[i] >= 50:
+        if points[i] >= GOLD_THRESHOLD:
             grade[i] = 1
-        elif points[i] >= 30:
+        elif points[i] >= SILVER_THRESHOLD:
             grade[i] = 2
         else:
             grade[i] = 0
