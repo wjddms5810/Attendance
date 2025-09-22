@@ -1,5 +1,5 @@
 FILE_NAME = "mission1/attendance_weekday_500.txt"
-MAX = 500
+MAX_FILE_SIZE = 500
 
 BONUS_THRESHOLD = 10
 WEEKEND_BONUS = 10
@@ -60,7 +60,7 @@ def is_wednesday(weekday):
     return weekday == "wednesday"
 
 
-def input2(user_name, weekday):
+def add_user_data(user_name, weekday):
     user_data = add_user_if_not_exists(user_name)
     points = get_weekday_points(weekday)
     user_data.attendance[weekday] += 1
@@ -121,19 +121,23 @@ def print_removed_player():
 def read_attendance_file(FILE_NAME):
     try:
         with open(FILE_NAME, encoding='utf-8') as f:
-            for _ in range(MAX):
+            input = []
+            for _ in range(MAX_FILE_SIZE):
                 line = f.readline()
                 if not line:
                     break
                 parts = line.strip().split()
                 if len(parts) == 2:
-                    input2(parts[0], parts[1])
+                    input.append(parts)
+            return input
     except FileNotFoundError:
         print("파일을 찾을 수 없습니다.")
 
 
 def input_file():
-    read_attendance_file(FILE_NAME)
+    input = read_attendance_file(FILE_NAME)
+    for parts in input:
+        add_user_data(parts[0], parts[1])
     process_all_users()
     print_points_and_grade()
     print_removed_player()
